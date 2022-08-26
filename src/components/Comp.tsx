@@ -1,7 +1,5 @@
 import React from 'react';
 
-const Comp = () => {
-  return <div>Comp</div>;
-};
+const Comp = () => <div>Comp</div>;
 
 export default Comp;
