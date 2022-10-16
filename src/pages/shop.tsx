@@ -26,7 +26,9 @@ export const getStaticProps: GetStaticProps = async () => {
     const { data } = await getAllProducts();
     productResp = data;
   } catch (err: any) {
-    productResp = err.response.data;
+    return {
+      notFound: true,
+    };
   }
   return {
     props: { productResp },

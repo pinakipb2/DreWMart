@@ -16,22 +16,17 @@ export interface ProductResp {
   updatedAt: string;
 }
 
-export interface ProductError {
-  status: number;
-  message: string;
-}
-
 export interface ShopProps {
-  productResp: ProductResp[] | ProductError;
+  productResp: ProductResp[];
 }
 
 export interface SingleProductProps {
-  productResp: ProductResp | ProductError;
+  productResp: ProductResp;
 }
 
 export interface ProductDetailType {
-  productResp: ProductResp | ProductError;
-  allProducts: ProductResp[] | ProductError;
+  productResp: ProductResp;
+  allProducts: ProductResp[];
 }
 
 export type Prod = ProductResp & { amount: number };

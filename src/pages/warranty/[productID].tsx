@@ -1,24 +1,31 @@
 import React from 'react';
 
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
 
 import { getProductHistory, getWarrantyInfo } from '../../api';
 import ShopFooter from '../../components/ShopFooter';
 import ShopNavbar from '../../components/ShopNavbar';
 import WarrantyDetail from '../../components/WarrantyDetail';
-import { ProductError, Store } from '../../types';
+import { Store } from '../../types';
 
-const Warranty: NextPage<{ productResp: Store }> = ({ productResp }) => (
-  <>
-    <ShopNavbar />
-    <WarrantyDetail productResp={productResp} />
-    <ShopFooter />
-  </>
-);
+const Warranty: NextPage<{ productResp: Store }> = ({ productResp }) => {
+  const router = useRouter();
+  if (router.isFallback) {
+    return <div className="flex w-full h-screen items-center justify-center text-center font-bold text-4xl">Loading...</div>;
+  }
+  return (
+    <>
+      <ShopNavbar />
+      <WarrantyDetail productResp={productResp} />
+      <ShopFooter />
+    </>
+  );
+};
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e14';
-  let paths;
+  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e12';
+  let paths = [];
   try {
     const { data } = await getProductHistory(addr);
     const prods = data.filter((p: Store) => p.isWarrantyClaimed === true);
@@ -30,25 +37,29 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const productID = context.params?.productID as string;
   const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e14';
-  let productResp: Store | ProductError;
+  let productResp: Store;
   try {
     const { data } = await getWarrantyInfo(productID, addr);
-    console.log(data);
     productResp = data;
   } catch (err: any) {
-    productResp = err.response.data;
-    console.log(err);
+    return {
+      notFound: true,
+    };
+  }
+  if (!productResp) {
+    return {
+      notFound: true,
+    };
   }
   return {
     props: { productResp },
-    revalidate: 5,
   };
 };
 
