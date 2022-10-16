@@ -4,7 +4,7 @@ import date from 'date-and-time';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { BiTimeFive } from 'react-icons/bi';
-import { BsFillCreditCard2FrontFill, BsHourglassBottom, BsHourglassSplit, } from 'react-icons/bs';
+import { BsFillCreditCard2FrontFill, BsHourglassBottom, BsHourglassSplit } from 'react-icons/bs';
 import { FaRegHeart, FaRegUserCircle } from 'react-icons/fa';
 import { FiShield } from 'react-icons/fi';
 import { IoLocationSharp } from 'react-icons/io5';
@@ -67,7 +67,14 @@ const WarrantyDetail: NextPage<{ productResp: Store }> = ({ productResp }) => (
         <div className="bg-gray-300 w-full px-5 justify-center h-[1px]" />
         <div className="p-4 pt-5 mb-10 w-full flex justify-center items-center">
           <div className="flex flex-col my-4 w-1/2">
-            <div className={`flex flex-col mt-4 border-none rounded-lg ${(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date(productResp.soldAt as string) || date.isSameDay(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration), new Date())) ? 'bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500' : 'bg-gradient-to-b from-gray-900 to-gray-600'}  py-6 px-6 text-white`}>
+            <div
+              className={`flex flex-col mt-4 border-none rounded-lg ${
+                date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date(productResp.soldAt as string) ||
+                date.isSameDay(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration), new Date())
+                  ? 'bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500'
+                  : 'bg-gradient-to-b from-gray-900 to-gray-600'
+              }  py-6 px-6 text-white`}
+            >
               <div className="flex justify-between text-lg pb-8">
                 <span className="bg-white p-2 w-fit rounded-md">
                   <QRCode value={productResp.prodId} size={60} />
@@ -85,7 +92,12 @@ const WarrantyDetail: NextPage<{ productResp: Store }> = ({ productResp }) => (
                   <BiTimeFive />
                   Valid Till:
                 </div>
-                <div className="font-bold">{`${days[date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getDay()]}`}, {`${date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getDate()}`} {`${month[date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getMonth()]}`} {`${date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getFullYear()}`}</div>
+                <div className="font-bold">
+                  {`${days[date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getDay()]}`},{' '}
+                  {`${date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getDate()}`}{' '}
+                  {`${month[date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getMonth()]}`}{' '}
+                  {`${date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration).getFullYear()}`}
+                </div>
                 <div className="font-semibold text-sm pt-0.5">ID: {productResp.prodId}</div>
               </div>
             </div>
@@ -105,19 +117,23 @@ const WarrantyDetail: NextPage<{ productResp: Store }> = ({ productResp }) => (
               </span>
               <span className="text-md font-bold">
                 <span className="mr-2">Date Issued:</span>
-                <span className="font-normal">{`${days[new Date(productResp.soldAt as any).getDay()]}`}, {`${new Date(productResp.soldAt as any).getDate()}`} {`${month[new Date(productResp.soldAt as any).getMonth()]}`} {`${new Date(productResp.soldAt as any).getFullYear()}`}</span>
+                <span className="font-normal">
+                  {`${days[new Date(productResp.soldAt as any).getDay()]}`}, {`${new Date(productResp.soldAt as any).getDate()}`} {`${month[new Date(productResp.soldAt as any).getMonth()]}`}{' '}
+                  {`${new Date(productResp.soldAt as any).getFullYear()}`}
+                </span>
               </span>
-              {
-                (date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date(productResp.soldAt as string) || date.isSameDay(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration), new Date())) ?
-                  <div className="py-1 flex flex-row items-center justify-end text-green-600 font-semibold text-lg gap-1">
-                    <BsHourglassSplit />
-                    Valid
-                  </div> :
-                  <div className="py-1 flex flex-row items-center justify-end text-red-600 font-semibold text-lg gap-1">
-                    <BsHourglassBottom />
-                    Invalid
-                  </div>
-              }
+              {date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date(productResp.soldAt as string) ||
+              date.isSameDay(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration), new Date()) ? (
+                <div className="py-1 flex flex-row items-center justify-end text-green-600 font-semibold text-lg gap-1">
+                  <BsHourglassSplit />
+                  Valid
+                </div>
+              ) : (
+                <div className="py-1 flex flex-row items-center justify-end text-red-600 font-semibold text-lg gap-1">
+                  <BsHourglassBottom />
+                  Invalid
+                </div>
+              )}
             </div>
           </div>
         </div>

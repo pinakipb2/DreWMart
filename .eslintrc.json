@@ -60,6 +60,7 @@
     "jsx-a11y/label-has-associated-control": "off",
     "operator-linebreak": "off",
     "react/button-has-type": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "indent": "off"
   }
 }
