@@ -61,6 +61,7 @@
     "operator-linebreak": "off",
     "react/button-has-type": "off",
     "no-param-reassign": "off",
-    "indent": "off"
+    "indent": "off",
+    "react/jsx-closing-bracket-location": "off"
   }
 }

@@ -9,6 +9,13 @@ const Home: NextPage = () => (
       <link rel="icon" href="/favicon.ico" />
     </Head>
     <div className="text-6xl bg-black text-white">Hello World</div>
+    {/* <button
+      className="bg-red-500 text-white px-3 py-1 rounded-md font-semibold"
+      onClick={() => {
+        getAccount();
+      }}>
+      Connect
+    </button> */}
   </>
 );
 
