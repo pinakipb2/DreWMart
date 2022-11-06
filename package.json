@@ -15,7 +15,7 @@
     "@reduxjs/toolkit": "^1.8.5",
     "axios": "^0.27.2",
     "date-and-time": "^2.4.1",
-    "ethers": "^5.7.0",
+    "ethers": "^5.7.2",
     "localforage": "^1.10.0",
     "next": "^12.3.0",
     "nextjs-progressbar": "^0.0.14",
