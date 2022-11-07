@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>DreWMart</title>
         <meta name="description" content="DreWMart" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <Provider store={store}>
         <NextNProgress color="#02A3fA" options={{ showSpinner: false }} />

@@ -12,6 +12,7 @@
     "lint-fix": "eslint src/**/*.tsx --fix"
   },
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@reduxjs/toolkit": "^1.8.5",
     "axios": "^0.27.2",
     "date-and-time": "^2.4.1",

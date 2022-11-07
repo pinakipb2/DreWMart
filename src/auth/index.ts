@@ -8,6 +8,7 @@ const connectAccount = async () => {
   if (typeof window !== 'undefined') {
     const provider = new ethers.providers.Web3Provider((window as windowType).ethereum);
     const accounts = await provider.send('eth_requestAccounts', []);
+    console.log(accounts);
   }
 };
 
