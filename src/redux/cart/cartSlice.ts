@@ -10,7 +10,7 @@ interface cartInitialState {
   total: number;
 }
 
-const initialState = {
+const initialState: cartInitialState = {
   cartItems: [] as Prod[],
   amount: 0,
   total: 0,

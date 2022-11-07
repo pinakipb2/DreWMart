@@ -45,7 +45,9 @@ const Register: NextPage = () => {
       <div className="bg-login-right w-1/2 mt-10 ml-20 mb-10 rounded-l-3xl shadow-xl shadow-gray-900/50">
         <div className="text-white font-medium p-8 absolute flex flex-row gap-2 items-center justify-center hover:cursor-pointer hover:text-green-400 select-none">
           <Link href="/">
-            <MdArrowBackIosNew />
+            <span>
+              <MdArrowBackIosNew />
+            </span>
           </Link>
           <Link href="/">
             <span>Home</span>
