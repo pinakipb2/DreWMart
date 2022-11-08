@@ -8,6 +8,7 @@ import { IoSearchSharp } from 'react-icons/io5';
 import { MdShoppingCart } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 
+import { clearCart } from '../redux/cart/cartSlice';
 import { useAppSelector } from '../redux/hooks';
 import { logout } from '../redux/user/userSlice';
 
@@ -16,6 +17,7 @@ const ShopNavbar: NextPage = () => {
   const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
   const itemsInCart = useAppSelector((state: any) => state.cart.cartItems.length);
   const logOut = () => {
+    dispatch(clearCart());
     dispatch(logout());
     Router.push('/login');
   };

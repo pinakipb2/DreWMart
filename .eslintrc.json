@@ -62,6 +62,7 @@
     "react/button-has-type": "off",
     "no-param-reassign": "off",
     "indent": "off",
-    "react/jsx-closing-bracket-location": "off"
+    "react/jsx-closing-bracket-location": "off",
+    "react/jsx-indent": "off"
   }
 }

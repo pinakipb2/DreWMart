@@ -20,8 +20,8 @@ import { numberWithCommas } from '../utils';
 import Modal from './Modal';
 
 const ShopCart: NextPage = () => {
-  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e14';
   const dispatch = useDispatch();
+  const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
   const cartItems = useAppSelector((state: any) => state.cart.cartItems) as Prod[];
   useEffect(() => {
     dispatch(calculateTotal());
@@ -44,7 +44,7 @@ const ShopCart: NextPage = () => {
   };
   const placeOrder = async () => {
     try {
-      await buyProducts(addr, cartItems as Prod[]);
+      await buyProducts(walletAddress, cartItems as Prod[]);
       setOpenModal(true);
       dispatch(clearCart());
     } catch (err) {

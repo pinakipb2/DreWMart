@@ -1,18 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
 import { getProductHistory, getWarrantyInfo } from '../../api';
 import ShopFooter from '../../components/ShopFooter';
 import ShopNavbar from '../../components/ShopNavbar';
 import WarrantyDetail from '../../components/WarrantyDetail';
+import { useAppSelector } from '../../redux/hooks';
 import { Store } from '../../types';
+import NotFound from '../404';
 
-const Warranty: NextPage<{ productResp: Store }> = ({ productResp }) => {
+const Warranty: NextPage = () => {
   const router = useRouter();
-  if (router.isFallback) {
+  const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [productResp, setProductResp] = useState({} as Store);
+
+  useEffect(() => {
+    const getDataFromPaths = async () => {
+      try {
+        const { data } = await getProductHistory(walletAddress);
+        const prods = data.filter((p: Store) => p.isWarrantyClaimed === true).map((p: Store) => p.id);
+        if (prods.includes(router.query.productID)) {
+          const { data: warrantyInfo } = await getWarrantyInfo(String(router.query.productID), walletAddress);
+          if (!warrantyInfo) {
+            setIsError(true);
+            return;
+          }
+          setProductResp(warrantyInfo);
+        } else {
+          setIsError(true);
+        }
+      } catch (err) {
+        console.log(err);
+        setIsError(true);
+      }
+      setIsLoading(false);
+    };
+    getDataFromPaths();
+  }, []);
+
+  if (router.isFallback || isLoading) {
     return <div className="flex w-full h-screen items-center justify-center text-center font-bold text-4xl">Loading...</div>;
+  }
+  if (isError) {
+    return <NotFound />;
   }
   return (
     <>
@@ -23,44 +57,10 @@ const Warranty: NextPage<{ productResp: Store }> = ({ productResp }) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e12';
-  let paths = [];
-  try {
-    const { data } = await getProductHistory(addr);
-    const prods = data.filter((p: Store) => p.isWarrantyClaimed === true);
-    paths = prods.map((product: Store) => ({
-      params: { productID: product.id },
-    }));
-  } catch (err: any) {
-    console.log(err);
-  }
-  return {
-    paths,
-    fallback: true,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const productID = context.params?.productID as string;
-  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e14';
-  let productResp: Store;
-  try {
-    const { data } = await getWarrantyInfo(productID, addr);
-    productResp = data;
-  } catch (err: any) {
-    return {
-      notFound: true,
-    };
-  }
-  if (!productResp) {
-    return {
-      notFound: true,
-    };
-  }
-  return {
-    props: { productResp },
-  };
-};
+export const getServerSideProps = (ctx: { params: any; }) => ({
+  props: {
+    key: ctx.params.productID
+  },
+});
 
 export default Warranty;
