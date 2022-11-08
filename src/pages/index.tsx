@@ -13,7 +13,7 @@ const Home: NextPage = () => (
       <div className="w-full flex-grow flex lg:w-auto items-center justify-center ml-12">
         <div className="text-sm lg:flex-grow">
           <Link href="/about">
-            <span className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-10 hover:cursor-pointer font-semibold">About</span>
+            <span className="block mt-4 lg:inline-block lg:mt-0 text-gray-300 hover:text-white mr-10 hover:cursor-pointer font-semibold">About Us</span>
           </Link>
         </div>
         <div>
