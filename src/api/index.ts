@@ -16,3 +16,6 @@ export const buyProducts = (walletAddress: string, products: Prod[]) => {
 export const getProductHistory = (walletAddress: string) => API.get(`/ecommerce/get-orders/${walletAddress}`);
 export const claimWarranty = (productID: string, walletAddress: string) => API.post('/ecommerce/claim-warranty', { id: productID, walletAddress });
 export const getWarrantyInfo = (productID: string, walletAddress: string) => API.get(`/ecommerce/warranty-info/${walletAddress}/${productID}`);
+
+export const registerUser = (data: { firstName: string; lastName: string; emailId: string; phoneNumber: string; address: string; walletAddress: string; }) => API.post('/user/register-user', data);
+export const loginUser = (data: { emailId: string; walletAddress: string; }) => API.post('/user/login-user', data);

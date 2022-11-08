@@ -3,14 +3,22 @@ import React from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import Router from 'next/router';
 import { IoSearchSharp } from 'react-icons/io5';
 import { MdShoppingCart } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
 
 import { useAppSelector } from '../redux/hooks';
+import { logout } from '../redux/user/userSlice';
 
 const ShopNavbar: NextPage = () => {
-  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e14';
+  const dispatch = useDispatch();
+  const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
   const itemsInCart = useAppSelector((state: any) => state.cart.cartItems.length);
+  const logOut = () => {
+    dispatch(logout());
+    Router.push('/login');
+  };
   return (
     <div className="bg-neutral-800 p-3 flex text-white justify-evenly items-center space-x-6 w-full text-lg">
       <Link href="/shop">
@@ -25,12 +33,18 @@ const ShopNavbar: NextPage = () => {
         </span>
       </div>
       <Link href="/profile">
-        <div className="font-semibold hover:cursor-pointer">Hi, {`${addr.slice(0, 5)}..${addr.slice(-5)}`}</div>
+        <div className="font-semibold hover:cursor-pointer">Hi, {`${walletAddress.slice(0, 5)}..${walletAddress.slice(-5)}`}</div>
       </Link>
       <Link href="/orders">
         <div className="hover:cursor-pointer">Orders</div>
       </Link>
-      <div className="hover:cursor-pointer">Logout</div>
+      <div
+        className="hover:cursor-pointer"
+        role="button"
+        onClick={() => {
+          logOut();
+        }}>Logout
+      </div>
       <Link href="/cart">
         <div className="text-white text-3xl relative flex hover:cursor-pointer">
           <MdShoppingCart />

@@ -13,17 +13,18 @@ import { IoLocationSharp } from 'react-icons/io5';
 import { RiSettings5Line, RiShoppingBag3Line } from 'react-icons/ri';
 
 import { claimWarranty, getProductHistory } from '../api';
+import { useAppSelector } from '../redux/hooks';
 import { Store } from '../types';
 import { month, numberWithCommas } from '../utils';
 
 const OrderHistory: NextPage = () => {
-  const addr: string = '0x165CD37b4C644C2921454429E7F9358d18A45e14';
+  const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
   const [productsHistory, setproductsHistory] = useState<Store[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const fetchOrderHistory = async () => {
       setLoading(true);
-      const { data } = await getProductHistory(addr);
+      const { data } = await getProductHistory(walletAddress);
       setproductsHistory(data as Store[]);
       setLoading(false);
     };
@@ -32,9 +33,9 @@ const OrderHistory: NextPage = () => {
 
   const claim = async (id: string) => {
     try {
-      await claimWarranty(id, addr);
+      await claimWarranty(id, walletAddress);
       toast.success('Warranty Claimed');
-      const { data } = await getProductHistory(addr);
+      const { data } = await getProductHistory(walletAddress);
       setproductsHistory(data as Store[]);
     } catch (err) {
       toast.error('Something Went Wrong');
@@ -100,25 +101,30 @@ const OrderHistory: NextPage = () => {
             <div className="text-4xl font-semibold text-blue-700">My Orders</div>
           </div>
           <div className="bg-gray-300 w-full px-5 justify-center h-[1px]" />
-          <div className="w-full items-center flex justify-center mt-8">
-            <button
-              className="bg-red-600 px-5 py-2 text-white rounded-md hover:shadow-md font-semibold"
-              onClick={() => {
-                burnAllExpired();
-              }}
-            >
-              <span className="flex items-center gap-1">
-                <span className="text-xl">
-                  <GiFireBomb />
-                </span>
-                Burn All Expired NFTs
-              </span>
-            </button>
-          </div>
+          {
+            !loading && productsHistory.length !== 0 &&
+            (
+              <div className="w-full items-center flex justify-center mt-8">
+                <button
+                  className="bg-red-600 px-5 py-2 text-white rounded-md hover:shadow-md font-semibold"
+                  onClick={() => {
+                    burnAllExpired();
+                  }}
+                >
+                  <span className="flex items-center gap-1">
+                    <span className="text-xl">
+                      <GiFireBomb />
+                    </span>
+                    Burn All Expired NFTs
+                  </span>
+                </button>
+              </div>
+            )
+          }
           <div className="p-4 pt-5 mb-10">
             {loading && <div className="pt-16 pb-40 flex gap-5 items-center text-center text-5xl justify-center text-red-500 font-semibold">Loading Order History...</div>}
             {!loading && productsHistory.length === 0 && (
-              <div className="pt-16 pb-40 flex gap-5 items-center text-center text-5xl justify-center text-red-500 font-semibold">
+              <div className="pt-20 pb-32 flex gap-5 items-center text-center text-5xl justify-center text-red-500 font-semibold">
                 <BsCartXFill />
                 No Items Bought Yet!
               </div>

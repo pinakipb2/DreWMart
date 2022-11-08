@@ -4,23 +4,42 @@ import { faker } from '@faker-js/faker';
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import { GiBatMask } from 'react-icons/gi';
 import { MdArrowBackIosNew } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
+
+import { registerUser } from '../api';
+import connectAccount from '../auth';
+import { useAppSelector } from '../redux/hooks';
+import { addWalletAddress } from '../redux/user/userSlice';
 
 interface IRegisterFormDetails {
   firstName: string;
   lastName: string;
-  email: string;
+  emailId: string;
   phoneNumber: string;
   address: string;
-  walletAddress?: string;
+  walletAddress: string;
 }
 
 const Register: NextPage = () => {
+  const dispatch = useDispatch();
+  const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
+  const connectToMetamask = async () => {
+    try {
+      const account: string = await connectAccount();
+      console.log(account);
+      dispatch(addWalletAddress(account));
+      toast.success(`${account.slice(0, 6)}..${account.slice(-6)} Connected`, { id: `${account}` });
+    } catch (err: any) {
+      toast.error(`${err.message}`, { id: 'metamask-error' });
+    }
+  };
   const [formDetails, setFormDetails] = useState<IRegisterFormDetails>({
     firstName: '',
     lastName: '',
-    email: '',
+    emailId: '',
     phoneNumber: '',
     address: '',
     walletAddress: '',
@@ -28,17 +47,38 @@ const Register: NextPage = () => {
   const fillFakeData = () => {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
-    const email = faker.internet.email(firstName, lastName, 'gmail.com', { allowSpecialCharacters: true });
+    const emailId = faker.internet.email(firstName, lastName, 'gmail.com', { allowSpecialCharacters: true });
     const phoneNumber = faker.phone.number('+91##########');
     const address = faker.address.streetAddress(true);
-    console.log({ firstName, lastName, email, phoneNumber, address });
+    console.log({ firstName, lastName, emailId, phoneNumber, address });
     setFormDetails({
       firstName,
       lastName,
-      email,
+      emailId,
       phoneNumber,
       address,
+      walletAddress
     });
+  };
+
+  const register = async () => {
+    // Validate Data
+    try {
+      const { data } = await registerUser(formDetails);
+      console.log(data);
+      toast.success('User Registered');
+    } catch (err: any) {
+      console.log(err.response.data);
+      toast.error(err.response.data.message, { id: walletAddress });
+      setFormDetails({
+        firstName: '',
+        lastName: '',
+        emailId: '',
+        phoneNumber: '',
+        address: '',
+        walletAddress,
+      });
+    }
   };
   return (
     <div className="h-screen flex flex-row w-full bg-login-bg">
@@ -79,12 +119,12 @@ const Register: NextPage = () => {
               />
             </div>
             <div>
-              <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Last Name
               </label>
               <input
                 type="text"
-                id="first_name"
+                id="last_name"
                 defaultValue={formDetails.lastName}
                 className="bg-login-input border border-login-right text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-login-input dark:border-login-right dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Type your last name"
@@ -94,25 +134,25 @@ const Register: NextPage = () => {
           </div>
           <div className="w-full px-32 flex flex-row space-x-4">
             <div>
-              <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label htmlFor="emailId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Email ID
               </label>
               <input
                 type="text"
-                id="first_name"
-                defaultValue={formDetails.email}
+                id="emailId"
+                defaultValue={formDetails.emailId}
                 className="bg-login-input border border-login-right text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-login-input dark:border-login-right dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Type your email id"
                 required
               />
             </div>
             <div>
-              <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label htmlFor="phn" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Phone Number
               </label>
               <input
                 type="text"
-                id="first_name"
+                id="phn"
                 defaultValue={formDetails.phoneNumber}
                 className="bg-login-input border border-login-right text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-login-input dark:border-login-right dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Type your phone number"
@@ -122,12 +162,12 @@ const Register: NextPage = () => {
           </div>
           <div className="w-full px-32">
             <div>
-              <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label htmlFor="addr" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Address
               </label>
               <input
                 type="text"
-                id="first_name"
+                id="addr"
                 defaultValue={formDetails.address}
                 className="bg-login-input border border-login-right text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-login-input dark:border-login-right dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Type your address"
@@ -145,18 +185,25 @@ const Register: NextPage = () => {
                 id="address"
                 defaultValue={formDetails.walletAddress}
                 className="bg-login-input border border-login-right text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-login-input dark:border-login-right dark:text-gray-300 dark:focus:ring-blue-500 dark:focus:border-blue-500 cursor-not-allowed"
-                // placeholder="0x66a576A977b7Bccf510630E0aA5e450EC11361Fa"
-                placeholder="Please connect to Metamask"
+                placeholder={`${walletAddress === '' ? 'Please connect to Metamask' : walletAddress}`}
                 disabled
               />
             </div>
           </div>
           <div className="w-full px-32">
             <div className="flex justify-between mt-4">
-              <button className="px-6 py-2 text-sm font-medium transition-colors duration-300 rounded-full shadow-xl text-violet-100 bg-violet-500 hover:bg-violet-600 shadow-violet-400/30 select-none">
+              <button
+                className="px-6 py-2 text-sm font-medium transition-colors duration-300 rounded-full shadow-xl text-violet-100 bg-violet-500 hover:bg-violet-600 shadow-violet-400/30 select-none"
+                onClick={() => {
+                  connectToMetamask();
+                }}>
                 Connect To Metamask
               </button>
-              <button className="px-6 py-2 text-sm font-medium transition-colors duration-300 rounded-full shadow-xl text-violet-100 bg-violet-500 hover:bg-violet-600 shadow-violet-400/30 select-none">
+              <button
+                className="px-6 py-2 text-sm font-medium transition-colors duration-300 rounded-full shadow-xl text-violet-100 bg-violet-500 hover:bg-violet-600 shadow-violet-400/30 select-none"
+                onClick={() => {
+                  register();
+                }}>
                 Register
               </button>
             </div>

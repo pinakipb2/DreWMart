@@ -4,9 +4,11 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } fro
 import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync';
 
 import cartReducer from './cart/cartSlice';
+import userReducer from './user/userSlice';
 
 const reducer = combineReducers({
   cart: cartReducer,
+  user: userReducer,
 });
 
 const config = {

@@ -20,11 +20,7 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    clearCart: (state: cartInitialState) => {
-      state.cartItems = [] as Prod[];
-      state.total = 0;
-      state.amount = 0;
-    },
+    clearCart: () => initialState,
     addToCart: (state: cartInitialState, action: PayloadAction<Prod>) => {
       // Insert if product is not in cart
       const isFound = state.cartItems.some((item) => {
