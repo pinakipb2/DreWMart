@@ -1,14 +1,19 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import localforage from 'localforage';
+import logger from 'redux-logger';
 import { FLUSH, PAUSE, PERSIST, persistReducer, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
 import { createStateSyncMiddleware, initMessageListener } from 'redux-state-sync';
 
+import adminReducer from './admin/adminSlice';
 import cartReducer from './cart/cartSlice';
+import retailerReducer from './retailer/retailerSlice';
 import userReducer from './user/userSlice';
 
 const reducer = combineReducers({
   cart: cartReducer,
   user: userReducer,
+  admin: adminReducer,
+  retailer: retailerReducer,
 });
 
 const config = {
@@ -46,7 +51,7 @@ if (isServer) {
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }).concat(createStateSyncMiddleware(config)),
+      }).concat(createStateSyncMiddleware(config)).concat(logger),
   });
   initMessageListener(store);
 }

@@ -1,11 +1,12 @@
 import React from 'react';
 
+import { NextPage } from 'next';
 import { FaBoxOpen, FaCartPlus } from 'react-icons/fa';
 import { MdInventory } from 'react-icons/md';
 
 import RetailerNavbar from '../../components/RetailerNavbar';
 
-const RetailerDashboard = () => (
+const RetailerDashboard: NextPage = () => (
   <div className="flex flex-col min-h-screen bg-gray-300">
     <RetailerNavbar />
     <div className="flex w-full h-full">

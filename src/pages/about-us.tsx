@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 
+import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -39,7 +40,7 @@ const ProfileCard = ({ username, name, linkedinUsername, emailID }: IProfileCard
   </div>
 );
 
-const About = () => {
+const About: NextPage = () => {
   const members = [
     {
       id: 1,
