@@ -1,9 +1,10 @@
 import { ethers } from 'ethers';
 
+interface eth {
+  ethereum?: any
+}
+
 const connectAccount = async () => {
-  interface eth {
-    ethereum?: any
-  }
   type windowType = Window & typeof globalThis & eth;
   if (typeof window !== 'undefined') {
     try {

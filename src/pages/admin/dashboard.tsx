@@ -1,26 +1,106 @@
 import React, { useState, useEffect } from 'react';
 
 import { NextPage } from 'next';
+import { toast } from 'react-hot-toast';
 import { FaUserPlus } from 'react-icons/fa';
 import { ImUsers } from 'react-icons/im';
 
-import { fetchAllAdmins } from '../../api';
+import { addAdmin, addRetailer, fetchAllAdmins, fetchAllRetailers } from '../../api';
+import getDTKContract from '../../auth/getDTKContract';
 import AdminNavbar from '../../components/AdminNavbar';
 
 const Dashboard: NextPage = () => {
   const [allAdmins, setAllAdmins] = useState([]);
+  const [allRetailers, setAllRetailers] = useState([]);
+  const [contractInstance, setContractInstance] = useState<any>(null);
+  const [adminForm, setAdminForm] = useState({
+    name: '',
+    walletAddress: ''
+  });
+  const [retailerForm, setRetailerForm] = useState({
+    name: '',
+    walletAddress: ''
+  });
+  const [rerender, setRerender] = useState(false);
   useEffect(() => {
     const fetchDashData = async () => {
       try {
         const { data } = await fetchAllAdmins();
         console.log(data);
         setAllAdmins(data);
+        const { data: retailers } = await fetchAllRetailers();
+        console.log(retailers);
+        setAllRetailers(retailers);
       } catch (err) {
         console.log(err);
       }
     };
     fetchDashData();
-  }, []);
+    const fetchContract = async () => {
+      try {
+        const contract = await getDTKContract();
+        console.log(contract);
+        setContractInstance(contract);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchContract();
+  }, [rerender]);
+
+  const addAdminButton = async () => {
+    if (adminForm.name !== '' && adminForm.walletAddress !== '') {
+      console.log(adminForm);
+      try {
+        const transaction = await contractInstance.addAdmin(adminForm.name, adminForm.walletAddress);
+        console.log(transaction);
+        const { data } = await addAdmin(adminForm);
+        console.log(data);
+        setAdminForm({
+          name: '',
+          walletAddress: ''
+        });
+        setRerender(true);
+        toast.success('Admin added Successfully');
+      } catch (err: any) {
+        console.log(err);
+        if (err.response) {
+          toast.error(err.response?.data?.message);
+        } else {
+          toast.error('Check Form Data');
+        }
+      }
+    } else {
+      toast.error('Fill all the Details');
+    }
+  };
+
+  const addRetailerButton = async () => {
+    if (retailerForm.name !== '' && retailerForm.walletAddress !== '') {
+      console.log(retailerForm);
+      try {
+        const transaction = await contractInstance.addRetailer(retailerForm.name, retailerForm.walletAddress);
+        console.log(transaction);
+        const { data } = await addRetailer(retailerForm);
+        console.log(data);
+        setRetailerForm({
+          name: '',
+          walletAddress: ''
+        });
+        setRerender(true);
+        toast.success('Retailer added Successfully');
+      } catch (err: any) {
+        console.log(err);
+        if (err.response) {
+          toast.error(err.response?.data?.message);
+        } else {
+          toast.error('Check Form Data');
+        }
+      }
+    } else {
+      toast.error('Fill all the Details');
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-300">
@@ -33,8 +113,12 @@ const Dashboard: NextPage = () => {
               <input
                 type="text"
                 id="name"
+                value={adminForm.name}
                 placeholder="Enter Admin Name"
                 className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-400 rounded focus:text-gray-700 focus:border-blue-600 focus:border-2 focus:outline-none mt-2"
+                onChange={(e) => {
+                  setAdminForm({ ...adminForm, name: e.target.value });
+                }}
               />
             </div>
             <div className="w-2/6">
@@ -42,11 +126,19 @@ const Dashboard: NextPage = () => {
               <input
                 type="text"
                 id="walletAddr"
+                value={adminForm.walletAddress}
                 placeholder="Enter Wallet Address"
                 className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-400 rounded focus:text-gray-700 focus:border-blue-600 focus:border-2 focus:outline-none mt-2"
+                onChange={(e) => {
+                  setAdminForm({ ...adminForm, walletAddress: e.target.value });
+                }}
               />
             </div>
-            <button className="flex gap-2 w-auto bg-green-600 text-white px-3 py-1.5 justify-center items-center mt-8 rounded-md text-base font-semibold hover:shadow-md">
+            <button
+              className="flex gap-2 w-auto bg-green-600 text-white px-3 py-1.5 justify-center items-center mt-8 rounded-md text-base font-semibold hover:shadow-md"
+              onClick={() => {
+                addAdminButton();
+              }}>
               <span className="text-xl">
                 <FaUserPlus />
               </span>
@@ -99,8 +191,12 @@ const Dashboard: NextPage = () => {
               <input
                 type="text"
                 id="name"
+                value={retailerForm.name}
                 placeholder="Enter Retailer Name"
                 className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-400 rounded focus:text-gray-700 focus:border-blue-600 focus:border-2 focus:outline-none mt-2"
+                onChange={(e) => {
+                  setRetailerForm({ ...retailerForm, name: e.target.value });
+                }}
               />
             </div>
             <div className="w-2/6">
@@ -108,11 +204,19 @@ const Dashboard: NextPage = () => {
               <input
                 type="text"
                 id="walletAddr"
+                value={retailerForm.walletAddress}
                 placeholder="Enter Wallet Address"
                 className="block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white border border-solid border-gray-400 rounded focus:text-gray-700 focus:border-blue-600 focus:border-2 focus:outline-none mt-2"
+                onChange={(e) => {
+                  setRetailerForm({ ...retailerForm, walletAddress: e.target.value });
+                }}
               />
             </div>
-            <button className="flex gap-2 w-auto bg-green-600 text-white px-3 py-1.5 justify-center items-center mt-8 rounded-md text-base font-semibold hover:shadow-md">
+            <button
+              className="flex gap-2 w-auto bg-green-600 text-white px-3 py-1.5 justify-center items-center mt-8 rounded-md text-base font-semibold hover:shadow-md"
+              onClick={() => {
+                addRetailerButton();
+              }}>
               <span className="text-xl">
                 <FaUserPlus />
               </span>
@@ -142,16 +246,15 @@ const Dashboard: NextPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b">
-                        <td className="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-900 text-center">1</td>
-                        <td className="text-md text-gray-900 font-normal px-6 py-4 whitespace-nowrap text-center">Mark</td>
-                        <td className="text-md text-gray-900 font-normal px-6 py-4 whitespace-nowrap text-center">erdf343546534ff</td>
-                      </tr>
-                      <tr className="bg-white border-b">
-                        <td className="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-900 text-center">2</td>
-                        <td className="text-md text-gray-900 font-normal px-6 py-4 whitespace-nowrap text-center">Jacob</td>
-                        <td className="text-md text-gray-900 font-normal px-6 py-4 whitespace-nowrap text-center">343fdvefe</td>
-                      </tr>
+                      {
+                        allRetailers.map((retailer: any, idx: number) => (
+                          <tr className="border-b" key={retailer.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-900 text-center">{idx + 1}</td>
+                            <td className="text-md text-gray-900 font-normal px-6 py-4 whitespace-nowrap text-center">{retailer.name}</td>
+                            <td className="text-md text-gray-900 font-normal px-6 py-4 whitespace-nowrap text-center">{`${retailer.walletAddress.slice(0, 9)}..${retailer.walletAddress.slice(-9)}`}</td>
+                          </tr>
+                        ))
+                      }
                     </tbody>
                   </table>
                 </div>

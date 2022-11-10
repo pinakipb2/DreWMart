@@ -20,6 +20,10 @@ export const getWarrantyInfo = (productID: string, walletAddress: string) => API
 export const registerUser = (data: { firstName: string; lastName: string; emailId: string; phoneNumber: string; address: string; walletAddress: string; }) => API.post('/user/register-user', data);
 export const loginUser = (data: { emailId: string; walletAddress: string; }) => API.post('/user/login-user', data);
 
+export const addAdmin = (data: { name: string; walletAddress: string; }) => API.post('/admin/add-admin', data);
 export const loginAdmin = (data: { walletAddress: string; }) => API.post('/admin/login', data);
 
 export const fetchAllAdmins = () => API.get('/admin/all-admins');
+
+export const addRetailer = (data: { name: string; walletAddress: string; }) => API.post('/retailer/add-retailer', data);
+export const fetchAllRetailers = () => API.get('/retailer/all-retailers');
