@@ -26,4 +26,8 @@ export const loginAdmin = (data: { walletAddress: string; }) => API.post('/admin
 export const fetchAllAdmins = () => API.get('/admin/all-admins');
 
 export const addRetailer = (data: { name: string; walletAddress: string; }) => API.post('/retailer/add-retailer', data);
+export const loginRetailer = (data: { walletAddress: string; }) => API.post('/retailer/login', data);
 export const fetchAllRetailers = () => API.get('/retailer/all-retailers');
+export const getInventory = (data: { walletAddress: string; }) => API.post('/retailer/inventory', data);
+export const getSoldProducts = (data: { walletAddress: string; }) => API.post('/retailer/get-sold-products', data);
+export const sellProductToUser = (data: { id: string; soldTo: string; walletAddress: string; }) => API.post('/retailer/sell-product', data);

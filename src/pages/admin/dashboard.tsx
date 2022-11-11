@@ -52,7 +52,7 @@ const Dashboard: NextPage = () => {
     if (adminForm.name !== '' && adminForm.walletAddress !== '') {
       console.log(adminForm);
       try {
-        const transaction = await contractInstance.addAdmin(adminForm.name, adminForm.walletAddress);
+        const transaction = await contractInstance.addAdmin(adminForm.name, adminForm.walletAddress.toLowerCase());
         console.log(transaction);
         const { data } = await addAdmin(adminForm);
         console.log(data);
@@ -60,7 +60,7 @@ const Dashboard: NextPage = () => {
           name: '',
           walletAddress: ''
         });
-        setRerender(true);
+        setRerender((value) => !value);
         toast.success('Admin added Successfully');
       } catch (err: any) {
         console.log(err);
@@ -79,7 +79,7 @@ const Dashboard: NextPage = () => {
     if (retailerForm.name !== '' && retailerForm.walletAddress !== '') {
       console.log(retailerForm);
       try {
-        const transaction = await contractInstance.addRetailer(retailerForm.name, retailerForm.walletAddress);
+        const transaction = await contractInstance.addRetailer(retailerForm.name, retailerForm.walletAddress.toLowerCase());
         console.log(transaction);
         const { data } = await addRetailer(retailerForm);
         console.log(data);
@@ -87,7 +87,7 @@ const Dashboard: NextPage = () => {
           name: '',
           walletAddress: ''
         });
-        setRerender(true);
+        setRerender((value) => !value);
         toast.success('Retailer added Successfully');
       } catch (err: any) {
         console.log(err);
