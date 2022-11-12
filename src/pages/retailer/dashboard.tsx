@@ -4,12 +4,15 @@ import { NextPage } from 'next';
 import { toast } from 'react-hot-toast';
 import { FaBoxOpen, FaCartPlus } from 'react-icons/fa';
 import { MdInventory } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
 
 import { getInventory, getSoldProducts, sellProductToUser } from '../../api';
 import RetailerNavbar from '../../components/RetailerNavbar';
 import { useAppSelector } from '../../redux/hooks';
+import { updateDrewTokens } from '../../redux/retailer/retailerSlice';
 
 const RetailerDashboard: NextPage = () => {
+  const dispatch = useDispatch();
   const walletAddress = useAppSelector((state: any) => state.retailer.walletAddress);
   const [inventory, setInventory] = useState([]);
   const [sold, setSold] = useState([]);
@@ -48,6 +51,7 @@ const RetailerDashboard: NextPage = () => {
         console.log(prodForm);
         const { data } = await sellProductToUser(prodForm);
         console.log(data);
+        dispatch(updateDrewTokens(data.drewTokens));
         setProdForm({
           id: '',
           soldTo: '',
