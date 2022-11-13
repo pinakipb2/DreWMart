@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+import date from 'date-and-time';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,12 +14,15 @@ import { IoLocationSharp } from 'react-icons/io5';
 import { RiSettings5Line, RiShoppingBag3Line } from 'react-icons/ri';
 
 import { claimWarranty, getProductHistory } from '../api';
+import getDMTKContract from '../auth/getDMTKContract';
 import { useAppSelector } from '../redux/hooks';
 import { Store } from '../types';
 import { month, numberWithCommas } from '../utils';
 
 const OrderHistory: NextPage = () => {
   const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
+  const [rerender, setRerender] = useState(false);
+  const [contractInstance, setContractInstance] = useState<any>(null);
   const [productsHistory, setproductsHistory] = useState<Store[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
@@ -29,14 +33,30 @@ const OrderHistory: NextPage = () => {
       setLoading(false);
     };
     fetchOrderHistory();
-  }, []);
+    const fetchContract = async () => {
+      try {
+        const contract = await getDMTKContract();
+        console.log(contract);
+        setContractInstance(contract);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchContract();
+  }, [rerender]);
 
-  const claim = async (id: string) => {
+  const claim = async (product: Store) => {
     try {
-      await claimWarranty(id, walletAddress);
+      const addedMonthDate = date.addMonths(new Date(product.soldAt as string), product.Product.warrantyDuration);
+      const createdAt = parseInt((new Date(String(product.soldAt)).getTime() / 1000).toFixed(0), 10);
+      const expiryAt = parseInt((new Date(String(addedMonthDate)).getTime() / 1000).toFixed(0), 10);
+      const transaction = await contractInstance.safeMint(product.prodId, product.Product.name, createdAt, expiryAt);
+      console.log(transaction);
+      await claimWarranty(product.id, walletAddress);
       toast.success('Warranty Claimed');
-      const { data } = await getProductHistory(walletAddress);
-      setproductsHistory(data as Store[]);
+      setRerender((value) => !value);
+      // const { data } = await getProductHistory(walletAddress);
+      // setproductsHistory(data as Store[]);
     } catch (err) {
       toast.error('Something Went Wrong');
     }
@@ -44,12 +64,18 @@ const OrderHistory: NextPage = () => {
 
   const viewWarranty = async (id: string) => {
     // revalidate the warrantyId
-    await fetch(`/api/revalidate?warrantyId=${id}`);
+    // await fetch(`/api/revalidate?warrantyId=${id}`);
     Router.push(`/warranty/${id}`);
   };
 
-  const burnAllExpired = () => {
-    toast.success('All Expired NFTs Burned');
+  const burnAllExpired = async () => {
+    try {
+      const transaction = await contractInstance.burnAllTokens();
+      console.log(transaction);
+      toast.success('All Expired NFTs Burned');
+    } catch (err) {
+      toast.error('No Expired NFTs');
+    }
   };
 
   return (
@@ -182,7 +208,7 @@ const OrderHistory: NextPage = () => {
                           <button
                             className="px-2 py-1.5 rounded-md text-sm text-white font-medium bg-red-500 flex items-center gap-1.5 hover:shadow-md"
                             onClick={() => {
-                              claim(product.id);
+                              claim(product);
                             }}
                           >
                             <span className="text-lg">

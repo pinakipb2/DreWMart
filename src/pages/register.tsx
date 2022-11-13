@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { faker } from '@faker-js/faker';
 import type { NextPage } from 'next';
@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 
 import { registerUser } from '../api';
 import connectAccount from '../auth';
+import getDMTKContract from '../auth/getDMTKContract';
 import { useAppSelector } from '../redux/hooks';
 import { addWalletAddress } from '../redux/user/userSlice';
 
@@ -25,7 +26,22 @@ interface IRegisterFormDetails {
 
 const Register: NextPage = () => {
   const dispatch = useDispatch();
+  const [contractInstance, setContractInstance] = useState<any>(null);
   const walletAddress = useAppSelector((state: any) => state.user.walletAddress);
+
+  useEffect(() => {
+    const fetchContract = async () => {
+      try {
+        const contract = await getDMTKContract();
+        console.log(contract);
+        setContractInstance(contract);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchContract();
+  }, []);
+
   const connectToMetamask = async () => {
     try {
       const account: string = await connectAccount();
@@ -64,20 +80,28 @@ const Register: NextPage = () => {
   const register = async () => {
     // Validate Data
     try {
+      console.log(formDetails);
+      const transaction = await contractInstance.addUser(`${formDetails.firstName} ${formDetails.lastName}`);
+      console.log(transaction);
       const { data } = await registerUser(formDetails);
       console.log(data);
       toast.success('User Registered');
     } catch (err: any) {
-      console.log(err.response.data);
-      toast.error(err.response.data.message, { id: walletAddress });
-      setFormDetails({
-        firstName: '',
-        lastName: '',
-        emailId: '',
-        phoneNumber: '',
-        address: '',
-        walletAddress,
-      });
+      console.log(err);
+      if (err.response) {
+        console.log(err.response.data);
+        toast.error(err.response.data.message, { id: walletAddress });
+        // setFormDetails({
+        //   firstName: '',
+        //   lastName: '',
+        //   emailId: '',
+        //   phoneNumber: '',
+        //   address: '',
+        //   walletAddress,
+        // });
+      } else {
+        toast.error('Check All Details');
+      }
     }
   };
   return (
