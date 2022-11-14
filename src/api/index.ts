@@ -31,3 +31,8 @@ export const fetchAllRetailers = () => API.get('/retailer/all-retailers');
 export const getInventory = (data: { walletAddress: string; }) => API.post('/retailer/inventory', data);
 export const getSoldProducts = (data: { walletAddress: string; }) => API.post('/retailer/get-sold-products', data);
 export const sellProductToUser = (data: { id: string; soldTo: string; walletAddress: string; }) => API.post('/retailer/sell-product', data);
+
+export const fetchAllCoupons = () => API.get('/coupon/all-coupons');
+export const resetDrewToken = (data: { walletAddress: string }) => API.post('/retailer/reset-tokens', data);
+export const redeemCoupon = (data: { retailerId: string; couponItemsId: string; }) => API.post('/coupon/redeem-coupon', data);
+export const fetchAllCouponsByRetailer = (retailerId: string) => API.get(`/coupon/get-coupons/${retailerId}`);

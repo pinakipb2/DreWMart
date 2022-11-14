@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Router from 'next/router';
 import { RiCopperCoinFill } from 'react-icons/ri';
+import { SiDogecoin } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
 
 import { useAppSelector } from '../redux/hooks';
@@ -16,6 +17,7 @@ import { logout } from '../redux/retailer/retailerSlice';
 const RetailerNavbar = () => {
   const walletAddress = useAppSelector((state: any) => state.retailer.walletAddress);
   const drewTokens = useAppSelector((state: any) => state.retailer.drewTokens);
+  const claimedTokens = useAppSelector((state: any) => state.retailer.claimedTokens);
   const dispatch = useDispatch();
   const logOut = () => {
     dispatch(logout());
@@ -35,6 +37,12 @@ const RetailerNavbar = () => {
           <div className="flex gap-2 items-center hover:cursor-pointer">
             <RiCopperCoinFill />
             <span className="font-semibold">{drewTokens}</span>
+          </div>
+        </Link>
+        <Link href="/retailer/redeem">
+          <div className="flex gap-2 items-center hover:cursor-pointer">
+            <SiDogecoin />
+            <span className="font-semibold">{claimedTokens}</span>
           </div>
         </Link>
         <div

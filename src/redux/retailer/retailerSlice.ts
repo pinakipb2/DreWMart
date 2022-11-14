@@ -6,12 +6,14 @@ interface retailerInitialState {
   id: string
   walletAddress: string
   drewTokens: number
+  claimedTokens: number
 }
 
 const initialState: retailerInitialState = {
   id: '',
   walletAddress: '',
-  drewTokens: 0
+  drewTokens: 0,
+  claimedTokens: 0
 };
 
 const retailerSlice = createSlice({
@@ -24,6 +26,9 @@ const retailerSlice = createSlice({
     updateDrewTokens: (state: retailerInitialState, action: PayloadAction<number>) => {
       state.drewTokens = action.payload;
     },
+    updateClaimedTokens: (state: retailerInitialState, action: PayloadAction<number>) => {
+      state.claimedTokens += action.payload;
+    },
     login: (state: retailerInitialState, action: PayloadAction<retailerInitialState>) => {
       state.id = action.payload.id;
       state.walletAddress = action.payload.walletAddress;
@@ -33,5 +38,5 @@ const retailerSlice = createSlice({
   },
 });
 
-export const { addWalletAddress, updateDrewTokens, login, logout } = retailerSlice.actions;
+export const { addWalletAddress, updateDrewTokens, updateClaimedTokens, login, logout } = retailerSlice.actions;
 export default retailerSlice.reducer;

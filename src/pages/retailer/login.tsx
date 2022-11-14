@@ -8,8 +8,9 @@ import { useDispatch } from 'react-redux';
 
 import { loginRetailer } from '../../api';
 import connectAccount from '../../auth';
+import getDTKContract from '../../auth/getDTKContract';
 import { useAppSelector } from '../../redux/hooks';
-import { addWalletAddress, login } from '../../redux/retailer/retailerSlice';
+import { addWalletAddress, login, updateClaimedTokens } from '../../redux/retailer/retailerSlice';
 
 const RetailerLogin: NextPage = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,13 @@ const RetailerLogin: NextPage = () => {
       const { data } = await loginRetailer({ walletAddress });
       console.log(data);
       dispatch(login(data));
+      const contract = await getDTKContract();
+      const transaction = await contract.balanceOf(walletAddress);
+      console.log(transaction);
+      // eslint-disable-next-line no-underscore-dangle
+      const claimedTokens = parseInt(transaction._hex as string, 16);
+      console.log(claimedTokens);
+      dispatch(updateClaimedTokens(claimedTokens));
       Router.push('/retailer/dashboard');
     } catch (err: any) {
       console.log(err.response.data);
