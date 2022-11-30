@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Prod } from '../types';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api/v1/',
+  baseURL: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/`,
   headers: { 'Content-Type': 'application/json', Authorization: 'Bearer token' },
 });
 
