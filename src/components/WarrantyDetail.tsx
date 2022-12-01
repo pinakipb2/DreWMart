@@ -69,7 +69,7 @@ const WarrantyDetail: NextPage<{ productResp: Store }> = ({ productResp }) => (
         <div className="p-4 pt-5 mb-10 w-full flex justify-center items-center">
           <div className="flex flex-col my-4 w-1/2">
             <div
-              className={`flex flex-col mt-4 border-none rounded-lg ${date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date(productResp.soldAt as string) ||
+              className={`flex flex-col mt-4 border-none rounded-lg ${date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date() ||
                 date.isSameDay(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration), new Date())
                 ? 'bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500'
                 : 'bg-gradient-to-b from-gray-900 to-gray-600'
@@ -122,7 +122,7 @@ const WarrantyDetail: NextPage<{ productResp: Store }> = ({ productResp }) => (
                   {`${new Date(productResp.soldAt as any).getFullYear()}`}
                 </span>
               </span>
-              {date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date(productResp.soldAt as string) ||
+              {date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration) > new Date() ||
                 date.isSameDay(date.addMonths(new Date(productResp.soldAt as string), productResp.Product.warrantyDuration), new Date()) ? (
                 <div className="py-1 flex flex-row items-center justify-end text-green-600 font-semibold text-lg gap-1">
                   <BsHourglassSplit />
